@@ -10,17 +10,19 @@ void initProtocal(){
     return;
   }
   // เมื่อรับข้อมูลมา ให้ทำในฟังก์ชั่น OnDataRecv ที่เราสร้างไว้
-  esp_now_register_recv_cb(OnDataRecv);
+  esp_now_register_recv_cb(esp_now_recv_cb_t(OnDataRecv));
 }
 
-typedef struct struct_message {
-    char a[32];
-    int b;
-    float c;
-    bool d;
-} struct_message;
+// typedef struct struct_message {
+//     char a[32];
+//     int b;
+//     float c;
+//     bool d;
+// } struct_message;
 
-struct_message C_Data;
+// struct_message C_Data;
+
+Controller_Status C_Data;
 
 // ToDo When Recieve Data
 void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
@@ -28,14 +30,17 @@ void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
   Serial.print("Bytes received: ");
   Serial.println(len);
   Serial.print("Char: ");
-  Serial.println(C_Data.a);
-  Serial.print("Int: ");
-  Serial.println(C_Data.b);
-  Serial.print("Float: ");
-  Serial.println(C_Data.c);
-  Serial.print("Bool: ");
-  Serial.println(C_Data.d);
+  Serial.println(C_Data.x);
+  Serial.print("Y: ");
+  Serial.println(C_Data.y);
+  Serial.print("RR: ");
+  Serial.println(C_Data.rr);
+  Serial.print("LL: ");
+  Serial.println(C_Data.ll);
   Serial.println();
+}
+bool updateData( Controller_Status& C_state ){
+
 }
 
 #endif

@@ -6,14 +6,32 @@
  uint8_t broadcastAddress[] = {0xec, 0xe3, 0x34, 0xdb, 0xf8, 0x64};//ส่งไปหาเฉพาะ mac address
 //uint8_t broadcastAddress[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};//ส่งไปหาทุกตัว
 
-typedef struct struct_message { // สร้างตัวแปรแพ็จเกจแบบ struct
-  char a[32];
-  int b;
-  float c;
-  bool d;
-} struct_message;
+typedef struct Controller_Status {
 
-struct_message C_Data; // ตัวแปรแพ็คเกจที่ต้องการส่ง
+    // RIGHT BUTTON Ex.(Right Down = rd, Right Left = rl)
+    bool rt , rl , rr , rd;
+
+    // LEFT BUTTON Ex.(Left Top = lt,Left Left = ll)
+    bool lt , ll , lr , ld;
+
+    // LEFT ANALOG
+    float x , y ;
+    bool l3 ;
+
+    // RIGHT ANALOG
+    float rx , ry ;
+    bool r3 ;
+
+    // R2 R1 L2 L1
+    bool r2 , r1 ;
+    bool l2 , l1 ;
+
+    // SELECT HOME
+    bool select , home ;
+
+} Controller_Status ;
+
+Controller_Status C_Data; // ตัวแปรแพ็คเกจที่ต้องการส่ง
 
 //เมื่อส่งข้อมูลมาทำฟังก์ชั่นนี้
 void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
@@ -50,10 +68,7 @@ void setup() {
 
 void loop() {
   // สร้างตัวแปรแพ็คเกจที่ต้องการส่ง
-  strcpy(C_Data.a, "THIS IS A CHAR");
-  C_Data.b = random(1, 20);
-  C_Data.c = 1.2;
-  C_Data.d = false;
+  
 
   // สั่งให้ส่งข้อมูล
   esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &C_Data, sizeof(C_Data));

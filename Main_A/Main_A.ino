@@ -37,9 +37,9 @@ MotorI2C motor4( Right_I2C_ADDRESS , Back_I2C_ADDRESS ); // Back Right
 
 // UNCOMMENT JUST ONE USED PROTOCAL (uncomment in pair) 
 
-#define Bluetooth bool useBluetooth = true; // use esp32_bluepad in board manager
+//#define Bluetooth bool useBluetooth = true; // use esp32_bluepad in board manager
 
-//#define EspNow bool useEspNow = false;
+#define EspNow bool useEspNow = true;
 
 //#define Wireless bool useWireless = false;
 
@@ -63,7 +63,7 @@ float y_turn = 0;
 //----------------- CONTROLLER ANALOG INIT && CONTROLLER OPTIONS
 
 
-struct Controller_Status {
+typedef struct Controller_Status {
 
     // RIGHT BUTTON Ex.(Right Down = rd, Right Left = rl)
     bool rt , rl , rr , rd;
@@ -86,7 +86,7 @@ struct Controller_Status {
     // SELECT HOME
     bool select , home ;
 
-};
+} Controller_Status ;
 
 // Instance Controller Logic
 Controller_Status C_now;
