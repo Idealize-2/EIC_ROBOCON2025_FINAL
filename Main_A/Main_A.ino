@@ -19,7 +19,10 @@
 //---------------------------------------- Smile Drive communication
 
 
+
 //---------------------------------------- DriveBase Address && Define
+float LIMIT_SPEED = 0.6;
+
 #define Left_I2C_ADDRESS 0x50
 #define Right_I2C_ADDRESS 0x57
 #define Front_I2C_ADDRESS 0x85
@@ -37,11 +40,11 @@ MotorI2C motor4( Right_I2C_ADDRESS , Back_I2C_ADDRESS ); // Back Right
 
 // UNCOMMENT JUST ONE USED PROTOCAL (uncomment in pair) 
 
-//#define Bluetooth bool useBluetooth = true; // use esp32_bluepad in board manager
+#define Bluetooth bool useBluetooth = true; // use esp32_bluepad in board manager
 
-#define EspNow bool useEspNow = true;
+//#define EspNow bool useEspNow = true; // also check Reciever MAC address to send
 
-//#define Wireless bool useWireless = false;
+//#define Wireless bool useWireless = true;
 
 //#define WebSocket bool useWebSocket = false;
 
@@ -54,6 +57,16 @@ MotorI2C motor4( Right_I2C_ADDRESS , Back_I2C_ADDRESS ); // Back Right
   #include <esp_now.h>
   #include <WiFi.h>
   // Dont forget to change Reciever MAC address in Sender Code
+#endif
+
+#ifdef Wireless
+  #include <SPI.h>
+  #include <nRF24L01.h>
+  #include <RF24.h>
+
+  const uint64_t pipeIn = 0xE9E8F0F0E1LL;
+  RF24 radio(2, 4); // ( CE , CSN ) Pin
+
 #endif
 
 float x_ctrl = 0;
@@ -92,6 +105,9 @@ typedef struct Controller_Status {
 Controller_Status C_now;
 Controller_Status C_past;
 
+// for Radio
+Controller_Status data;
+
 ///////////////////////////////////////
 //    _____        _                 
 //   / ____|      | |                
@@ -110,6 +126,7 @@ void setup() {
 
   //Start Communication Protocal
   initProtocal();
+  
 
 }
 
@@ -128,6 +145,7 @@ void loop()
 {
 //------------------------------------------------ Controller Input && update data
   bool dataUpdated = updateData( C_now );
+  //Serial.println("OK"); 
   //Serial.println( dataUpdated ); //for Debug
   if (dataUpdated) 
   {

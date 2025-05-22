@@ -13,11 +13,11 @@ void processController()
     Serial.println("RIght Down pressed");
   }
 
-  Serial.print(C_now.x);
-  Serial.print(" ");
-  Serial.println(C_now.y);
+  // Serial.print(C_now.x);
+  // Serial.print(" ");
+  // Serial.println(C_now.y);
 
-  Serial.print(C_now.rx);
-  Serial.print(" ");
-  Serial.println(C_now.ry);
+  // Serial.print(C_now.rx);
+  // Serial.print(" ");
+  // Serial.println(C_now.ry);
 }

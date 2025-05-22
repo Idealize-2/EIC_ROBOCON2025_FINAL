@@ -32,9 +32,9 @@ void movebase(int rpm, float theta, int turn) {
   speed4 = rpm * cos_theta / max_value - turn;
 
   // Run DriveBase
-  motor1.run(speed1);
-  motor2.run(-speed2);
-  motor3.run(-speed3);
-  motor4.run(speed4);
+  motor1.run(speed1 * LIMIT_SPEED);
+  motor2.run(-speed2 * LIMIT_SPEED);
+  motor3.run(-speed3 * LIMIT_SPEED);
+  motor4.run(speed4 * LIMIT_SPEED);
 
 }
