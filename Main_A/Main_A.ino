@@ -7,18 +7,19 @@
 #include "Motor.h"
 
 
-
-//-------------------------------------------------- Library Include
-
-
-
-
 //---------------------------------------- Smile Drive communication
 #define MOTOR_SDA 21
 #define MOTOR_SCL 22
-//---------------------------------------- Smile Drive communication
 
+//---------------------------------------- Upper Shooter pin
+#define INA1 26
+#define INB1 25
+#define PWM1 27
 
+//---------------------------------------- Lower Shooter pin
+#define INA2 16
+#define INB2 32
+#define PWM2 4
 
 //---------------------------------------- DriveBase Address && Define
 float LIMIT_SPEED = 0.6;
@@ -28,15 +29,47 @@ float LIMIT_SPEED = 0.6;
 #define Front_I2C_ADDRESS 0x85
 #define Back_I2C_ADDRESS 0x86
 
+
+//---------------------------------------- Feeder, Drawer Address && Define
+#define IIOrpm_I2C_ADDRESS 0x51
+#define FeederPin 0x85
+#define DrawerPin 0x86
+
+
 MotorI2C motor1( Left_I2C_ADDRESS , Front_I2C_ADDRESS ); // Front Left
 MotorI2C motor2( Right_I2C_ADDRESS , Front_I2C_ADDRESS ); // Front Right
 MotorI2C motor3( Left_I2C_ADDRESS , Back_I2C_ADDRESS ); // Back Left
 MotorI2C motor4( Right_I2C_ADDRESS , Back_I2C_ADDRESS ); // Back Right
+MotorI2C motor5( IIOrpm_I2C_ADDRESS , FeederPin ); // Feeder
+MotorI2C motor6( IIOrpm_I2C_ADDRESS , DrawerPin ); // Drawer
+
+
 
 //---------------------------------------- DriveBase Address && Define
 
 
 //----------------- CONTROLLER ANALOG INIT && CONTROLLER OPTIONS
+
+
+//----------------- Controller State Button
+bool XState = false;
+
+bool YState = false;
+
+bool AState = false;
+
+bool BState = false;
+bool AfterBState = false;
+
+unsigned long  AStartTime = 0;
+unsigned long  AfterBStartTime = 0;
+unsigned long  BStartTime = 0;
+
+bool L1State = false;
+bool L2State = false;
+bool R1State = false;
+bool R2State = false;
+
 
 // UNCOMMENT JUST ONE USED PROTOCAL (uncomment in pair) 
 
@@ -121,8 +154,17 @@ Controller_Status data;
 
 void setup() {
   Serial.begin(115200);
+  Wire.begin();
   initiateMotors();
   resetEncoders();
+
+  pinMode(INA1, OUTPUT);
+  pinMode(INB1, OUTPUT);
+  pinMode(PWM1, OUTPUT);
+  
+  pinMode(INA2, OUTPUT);
+  pinMode(INB2, OUTPUT);
+  pinMode(PWM2, OUTPUT);
 
   //Start Communication Protocal
   initProtocal();
@@ -167,5 +209,5 @@ void loop()
   float speed = sqrt((pow(x_ctrl, 2) + pow(y_ctrl, 2))) * 255;
   movebase(speed, direction, turn);
 //------------------------------------------------- DriveBase Control
-
+  ActionCommand();
 }
