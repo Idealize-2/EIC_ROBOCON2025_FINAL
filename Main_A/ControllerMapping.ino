@@ -2,23 +2,41 @@ void processController()
 {
   if( C_now.rt && !C_past.rt  ){
     //Serial.println("Y button pressed");
-    YState = true;
+    //YState = !YState;
+    if (ShootState == 0){
+      ShootState = 2;
+    }
+    else{
+      ShootState = 0;
+    }
+    //Serial.println(YState);
 
   }
   if( C_now.rl && !C_past.rl ){
     //Serial.println("X button pressed");
-    XState != XState;
-    
+    //XState = !XState;
+    if (ShootState == 0){
+      ShootState = 1;
+    }
+    else{
+      ShootState = 0;
+    }
+
+  }  
   if( C_now.rr && !C_past.rr ){
     //Serial.println("B button pressed");
     BState = true;
     BStartTime = millis();
 
   }
-  if( C_now.rd && !C_past.rd ){
+  // if( C_now.rd && !C_past.rd ){
+  if( C_now.rd ) {  
     //Serial.println("A button pressed");
     AState = true;
     AStartTime = millis();
+  }
+  else{
+    AState = false;
   }
 
   // Serial.print(C_now.x);
@@ -32,15 +50,21 @@ void processController()
 
 void ActionCommand(){
   if (AState == true){
-    ActionTime(AStartTime, 3000, 'A');    
+    Serial.println("Drawer_On");
+    motor6.run(-200);
+    //ActionTime(AStartTime, 3000, 'A');    
+  }
+  if (AState == false){
+    Serial.println("Drawer_Off");
+    motor6.run(0);
   }
   if (BState == true){
-    ActionTime(BStartTime, 1000, 'B');
+    ActionTime(BStartTime, 800, 'B');
   }
   if (AfterBState == true){
-    ActionTime(AfterBStartTime, 1200, 'C');
+    ActionTime(AfterBStartTime, 800, 'C');
   }
-  if (XState == true){
+  if (ShootState == 1){
     digitalWrite(INA1, HIGH);
     digitalWrite(INB1, LOW);
     analogWrite(PWM1, 100);
@@ -48,18 +72,29 @@ void ActionCommand(){
     digitalWrite(INA2, HIGH);
     digitalWrite(INB2, LOW);
     analogWrite(PWM2, 250);
+    Serial.println("Dribble");
+  } 
+  if (ShootState == 2){
+    digitalWrite(INA1, LOW);
+    digitalWrite(INB1, HIGH);
+    analogWrite(PWM1, 250);
+
+    digitalWrite(INA2, HIGH);
+    digitalWrite(INB2, LOW);
+    analogWrite(PWM2, 250);
     Serial.println("Shoot");
   } 
-  if (XState == false){
-    digitalWrite(INA1, HIGH);
-    digitalWrite(INB1, LOW);
+  if (ShootState == 0){
+    digitalWrite(INA1, LOW);
+    digitalWrite(INB1, HIGH);
     analogWrite(PWM1, 0);
 
     digitalWrite(INA2, HIGH);
     digitalWrite(INB2, LOW);
     analogWrite(PWM2, 0);
-    Serial.println("Stop");
+    //Serial.println("Stop");
   } 
+
 
 }
 
@@ -68,11 +103,13 @@ void ActionTime(unsigned long start_time ,unsigned long time, char label){
       {
         //End process
         //Serial.println("End");
-        if (label == 'A'){
-          AState = false;
+        // if (label == 'A'){
+        //   motor6.run(0);
+        //   AState = false;
+        //   Serial.println("EndA");
           
 
-        }
+        // }
         if (label == 'B'){
           motor5.run(0);
           BState = false;
@@ -83,16 +120,21 @@ void ActionTime(unsigned long start_time ,unsigned long time, char label){
         if (label == 'C'){
           motor5.run(0);
           AfterBState = false;
+          ShootState = 0;
           Serial.println("EndBDown");
         }
       }
   else{
-    if (label == 'A'){
-      Serial.println("Drawer_On");
-    }   
+    // if (label == 'A'){
+    //   Serial.println("Drawer_On");
+    //   motor6.run(120);
+    // }   
     if (label == 'B'){
       Serial.println("Feeder_Up");
       motor5.run(255);
+      if (millis() - start_time >= 450){
+        ShootState = 1;
+      }
     }
     if (label == 'C'){
       Serial.println("Feeder_Down");

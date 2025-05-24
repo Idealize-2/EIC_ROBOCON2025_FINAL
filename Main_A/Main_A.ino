@@ -53,9 +53,9 @@ MotorI2C motor6( IIOrpm_I2C_ADDRESS , DrawerPin ); // Drawer
 
 //----------------- Controller State Button
 bool XState = false;
-
 bool YState = false;
-
+int ShootState = 0;
+ 
 bool AState = false;
 
 bool BState = false;
