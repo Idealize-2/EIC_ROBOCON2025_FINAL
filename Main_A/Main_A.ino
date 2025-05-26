@@ -64,6 +64,8 @@ bool AfterBState = false;
 unsigned long  AStartTime = 0;
 unsigned long  AfterBStartTime = 0;
 unsigned long  BStartTime = 0;
+unsigned long  YStartTime = 0;
+
 
 bool L1State = false;
 bool L2State = false;

@@ -2,13 +2,15 @@ void processController()
 {
   if( C_now.rt && !C_past.rt  ){
     //Serial.println("Y button pressed");
-    //YState = !YState;
-    if (ShootState == 0){
-      ShootState = 2;
-    }
-    else{
-      ShootState = 0;
-    }
+    YState = !YState;
+    YStartTime = millis();
+
+    // if (ShootState == 0){
+    //   ShootState = 2;
+    // }
+    // else{
+    //   ShootState = 0;
+    // }
     //Serial.println(YState);
 
   }
@@ -37,6 +39,15 @@ void processController()
   }
   else{
     AState = false;
+  }
+
+  if (C_now.r1 && !C_past.r1 ) {
+    if (ShootState == 0){
+      ShootState = 2;
+    }
+    else{
+      ShootState = 0;
+    }
   }
 
   // Serial.print(C_now.x);
@@ -94,6 +105,9 @@ void ActionCommand(){
     analogWrite(PWM2, 0);
     //Serial.println("Stop");
   } 
+  if (YState == true){
+    ActionTime(YStartTime, 800, 'Y');
+  }
 
 
 }
@@ -123,6 +137,13 @@ void ActionTime(unsigned long start_time ,unsigned long time, char label){
           ShootState = 0;
           Serial.println("EndBDown");
         }
+        if (label == 'Y'){
+          motor5.run(0);
+          YState = false;
+          AfterBState = true;
+          AfterBStartTime = millis();
+          Serial.println("EndY");
+        }
       }
   else{
     // if (label == 'A'){
@@ -139,7 +160,11 @@ void ActionTime(unsigned long start_time ,unsigned long time, char label){
     if (label == 'C'){
       Serial.println("Feeder_Down");
       motor5.run(-255);
+    }
+    if (label == 'Y'){
+      Serial.println("Feeder_Up");
+      motor5.run(255);
+      }
     }    
   }     
 
-}
