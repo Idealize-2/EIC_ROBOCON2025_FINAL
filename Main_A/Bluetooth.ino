@@ -6,6 +6,7 @@
 
 void initProtocal()
 {
+
   Serial.printf("Firmware: %s\n", BP32.firmwareVersion());
   const uint8_t* addr = BP32.localBdAddress();
   Serial.printf("BD Addr: %2X:%2X:%2X:%2X:%2X:%2X\n", addr[0], addr[1], addr[2], addr[3], addr[4], addr[5]);
@@ -26,6 +27,8 @@ void onConnectedController(ControllerPtr ctl) {
       // Additionally, you can get certain gamepad properties like:
       // Model, VID, PID, BTAddr, flags, etc.
       ControllerProperties properties = ctl->getProperties();
+      const uint8_t* addr = properties.btaddr;
+      Serial.printf("Controller Addr: %2X:%2X:%2X:%2X:%2X:%2X\n", addr[0], addr[1], addr[2], addr[3], addr[4], addr[5]);
       Serial.printf("Controller model: %s, VID=0x%04x, PID=0x%04x\n", ctl->getModelName().c_str(), properties.vendor_id,
                     properties.product_id);
       myControllers[i] = ctl;
