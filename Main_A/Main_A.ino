@@ -35,6 +35,7 @@ float LIMIT_SPEED = 0.45;
 #define FeederPin 0x85
 #define DrawerPin 0x86
 
+#define Relay 33
 
 MotorI2C motor1( Left_I2C_ADDRESS , Front_I2C_ADDRESS ); // Front Left
 MotorI2C motor2( Right_I2C_ADDRESS , Front_I2C_ADDRESS ); // Front Right
@@ -187,6 +188,8 @@ void setup() {
   pinMode(INA2, OUTPUT);
   pinMode(INB2, OUTPUT);
   pinMode(PWM2, OUTPUT);
+
+  pinMode(Relay, OUTPUT);
 
   //Start Communication Protocal
   initProtocal();
