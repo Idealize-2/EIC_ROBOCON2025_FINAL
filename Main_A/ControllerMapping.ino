@@ -30,6 +30,10 @@ void processController() {
     //Serial.println("A button pressed");
     AState = !AState;
   }
+  if (C_now.r2 && !C_past.r2) {
+    //Serial.println("Aimming");
+    IsAimming = !IsAimming;
+  }
   // if( C_now.rd && !C_past.rd ){
   if (C_now.l1) {
     motor6.run(-200);
@@ -58,12 +62,12 @@ void processController() {
 
 void ActionCommand() {
   if (AState == true) {
-    Serial.println("Laser_On");
+    //Serial.println("Laser_On");
     digitalWrite(Relay, HIGH);
     //ActionTime(AStartTime, 3000, 'A');
   }
   if (AState == false) {
-    Serial.println("Laser_Off");
+    //Serial.println("Laser_Off");
     digitalWrite(Relay, LOW);
   }
   if (BState == true) {

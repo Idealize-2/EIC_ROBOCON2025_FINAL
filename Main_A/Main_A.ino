@@ -51,6 +51,11 @@ MotorI2C motor6( IIOrpm_I2C_ADDRESS , DrawerPin ); // Drawer
 
 //----------------- CONTROLLER ANALOG INIT && CONTROLLER OPTIONS
 
+//---------------------------------------- PySerial
+#define MAX_BUFF_LEN 255
+char c;
+char str[MAX_BUFF_LEN];
+uint8_t idx = 0; 
 
 //----------------- Controller State Button
 bool XState = false;
@@ -61,6 +66,8 @@ bool AState = false;
 
 bool BState = false;
 bool AfterBState = false;
+
+bool IsAimming = true;
 
 unsigned long  AStartTime = 0;
 unsigned long  AfterBStartTime = 0;
@@ -85,7 +92,7 @@ bool R2State = false;
 //#define WebSocket bool useWebSocket = false;
 
 #ifdef Bluetooth 
-  #include <Bluepad32.h>
+#include <Bluepad32.h>
 #include <uni.h>
 ControllerPtr myControllers[1];
 
@@ -229,10 +236,34 @@ void loop()
 
 
 //------------------------------------------------- DriveBase Control
-  float direction = atan2(x_ctrl, -y_ctrl);
-  float turn = mapf(x_turn, -1, 1, -180, 180);
-  float speed = sqrt((pow(x_ctrl, 2) + pow(y_ctrl, 2))) * 255;
-  movebase(speed, direction, turn);
+  if (IsAimming == true){
+    //Serial.print("Aimming: ");
+    if(Serial.available() > 0){ 
+    
+      c = Serial.read(); 
+    
+      if(c != '\n'){ // Still reading
+        str[idx++] = c; // Parse the string byte (char) by byte
+      }
+      else{ // Done reading
+        str[idx] = '\0';
+        idx = 0;
+        Serial.print("ESP: ");
+        Serial.println(str);
+        // float direction = 0.0;
+        // float turn = 0.0;
+        // float speed = 0.0;
+        // movebase(speed, direction, turn);
+      }
+    }
+  }
+  else {  
+    float direction = atan2(x_ctrl, -y_ctrl);
+    float turn = mapf(x_turn, -1, 1, -180, 180);
+    float speed = sqrt((pow(x_ctrl, 2) + pow(y_ctrl, 2))) * 255;
+    movebase(speed, direction, turn);
+  }
+  
 //------------------------------------------------- DriveBase Control
   ActionCommand();
 }
