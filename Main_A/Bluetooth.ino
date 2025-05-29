@@ -7,6 +7,21 @@
 void initProtocal()
 {
 
+  bd_addr_t controller_addr;
+
+  // Parse human-readable Bluetooth address.
+  sscanf_bd_addr(controller_addr_string, controller_addr);
+
+  // Notice that this address will be added in the Non-volatile-storage (NVS).
+  // If the device reboots, the address will still be stored.
+  // Adding a duplicate value will do nothing.
+  // You can add up to four entries in the allowlist.
+  uni_bt_allowlist_add_addr(controller_addr);
+
+  // Finally, enable the allowlist.
+  // Similar to the "add_addr", its value gets stored in the NVS.
+  uni_bt_allowlist_set_enabled(true);
+
   Serial.printf("Firmware: %s\n", BP32.firmwareVersion());
   const uint8_t* addr = BP32.localBdAddress();
   Serial.printf("BD Addr: %2X:%2X:%2X:%2X:%2X:%2X\n", addr[0], addr[1], addr[2], addr[3], addr[4], addr[5]);

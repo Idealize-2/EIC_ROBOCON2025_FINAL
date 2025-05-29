@@ -80,8 +80,6 @@ bool R2State = false;
 
 //#define EspNow bool useEspNow = true; // also check Reciever MAC address to send
 
-//#define Wireless bool useWireless = true;
-
 //#define WebSocket bool useWebSocket = false;
 
 #ifdef Bluetooth 
@@ -91,7 +89,9 @@ ControllerPtr myControllers[1];
 
 // The address of the gamepad that is allowed to connect.
 // You can add up to four entries.
-static const char * controller_addr_string = "40:8E:2C:16:4E:66";
+//static const char * controller_addr_string = "40:8E:2C:16:4E:66";
+static const char * controller_addr_string = "90:B6:85:9A:50:B0";
+
 #endif
 
 #ifdef EspNow
@@ -162,20 +162,8 @@ Controller_Status data;
 
 void setup() {
   // Somewhere in your "setup" add the following lines:
-  bd_addr_t controller_addr;
+  
 
-  // Parse human-readable Bluetooth address.
-  sscanf_bd_addr(controller_addr_string, controller_addr);
-
-  // Notice that this address will be added in the Non-volatile-storage (NVS).
-  // If the device reboots, the address will still be stored.
-  // Adding a duplicate value will do nothing.
-  // You can add up to four entries in the allowlist.
-  uni_bt_allowlist_add_addr(controller_addr);
-
-  // Finally, enable the allowlist.
-  // Similar to the "add_addr", its value gets stored in the NVS.
-  uni_bt_allowlist_set_enabled(true);
   Serial.begin(115200);
   Wire.begin();
   initiateMotors();
