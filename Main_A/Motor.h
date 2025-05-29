@@ -26,6 +26,8 @@ class MotorI2C {       // The class
 
       if (pwm == 0) { dir = 3; }
       Wire.write(dir);
+      if(pwm > 255) pwm = 255;
+      if(pwm < -254 ) pwm = -254;
       Wire.write(int(abs(pwm)));
       Wire.endTransmission();
     }

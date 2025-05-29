@@ -99,7 +99,7 @@ ControllerPtr myControllers[1];
 // The address of the gamepad that is allowed to connect.
 // You can add up to four entries.
 static const char * controller_addr_string = "40:8E:2C:16:4E:66";
-#endif
+#endif 
 
 #ifdef EspNow
   #include <esp_now.h>
@@ -239,22 +239,32 @@ void loop()
   if (IsAimming == true){
     //Serial.print("Aimming: ");
     if(Serial.available() > 0){ 
-    
-      c = Serial.read(); 
-    
-      if(c != '\n'){ // Still reading
-        str[idx++] = c; // Parse the string byte (char) by byte
-      }
-      else{ // Done reading
-        str[idx] = '\0';
-        idx = 0;
-        Serial.print("ESP: ");
-        Serial.println(str);
-        // float direction = 0.0;
-        // float turn = 0.0;
-        // float speed = 0.0;
-        // movebase(speed, direction, turn);
-      }
+
+      String input = Serial.readStringUntil('\n');
+      int x = intput.toInt(); 
+
+      float p = 0.3
+      float run = x*p;
+
+      motor1.run( run * LIMIT_SPEED );
+      motor2.run( -run * LIMIT_SPEED );
+      motor3.run( run * LIMIT_SPEED );
+      motor4.run( -run * LIMIT_SPEED );
+      ////////////////////////////////////////// TEST
+      // if(c != '\n'){ // Still reading
+      //   str[idx++] = c; // Parse the string byte (char) by byte
+      // }
+      // else{ // Done reading
+      //   str[idx] = '\0';
+      //   idx = 0;
+      //   Serial.print("ESP: ");
+      //   Serial.println(str);
+      //   // float direction = 0.0;
+      //   // float turn = 0.0;
+      //   // float speed = 0.0;
+      //   // movebase(speed, direction, turn);
+      // }
+      ////////////////////////////////////////// TEST
     }
   }
   else {  
