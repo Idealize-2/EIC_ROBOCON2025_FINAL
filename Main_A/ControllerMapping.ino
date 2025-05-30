@@ -47,6 +47,23 @@ void processController() {
     }
   }
 
+  if (C_now.r2 && !C_past.r2) {
+    if (ShootState == 0) {
+      ShootState = 4;
+    } else {
+      ShootState = 0;
+    }
+  }
+
+  if (C_now.ld) {
+    motor5.run(-255);
+  } else if (C_now.lt){
+    motor5.run(255);
+  } else if (!BState && !AfterBState){
+    motor5.run(0);
+  }
+
+
   // Serial.print(C_now.x);
   // Serial.print(" ");
   // Serial.println(C_now.y);
@@ -58,19 +75,19 @@ void processController() {
 
 void ActionCommand() {
   if (AState == true) {
-    Serial.println("Laser_On");
+    // Serial.println("Laser_On");
     digitalWrite(Relay, HIGH);
     //ActionTime(AStartTime, 3000, 'A');
   }
   if (AState == false) {
-    Serial.println("Laser_Off");
+    // Serial.println("Laser_Off");
     digitalWrite(Relay, LOW);
   }
   if (BState == true) {
     ActionTime(BStartTime, 900, 'B');
   }
   if (AfterBState == true) {
-    ActionTime(AfterBStartTime, 800, 'C');
+    ActionTime(AfterBStartTime, 640, 'C');
   }
   if (ShootState == 1) {
     digitalWrite(INA1, HIGH);
@@ -111,6 +128,16 @@ void ActionCommand() {
     analogWrite(PWM2, 100);
     // Serial.println("X");
   }
+
+  if (ShootState == 4) {
+    digitalWrite(INA1, LOW);
+    digitalWrite(INB1, HIGH);
+    analogWrite(PWM1, 220);
+
+    digitalWrite(INA2, HIGH);
+    digitalWrite(INB2, LOW);
+    analogWrite(PWM2, 220);
+  }
 }
 
 void ActionTime(unsigned long start_time, unsigned long time, char label) {
@@ -125,20 +152,20 @@ void ActionTime(unsigned long start_time, unsigned long time, char label) {
 
     // }
     if (label == 'B') {
-      motor5.run(0);
+      // motor5.run(0);
       BState = false;
       AfterBState = true;
       AfterBStartTime = millis();
       Serial.println("EndB");
     }
     if (label == 'C') {
-      motor5.run(0);
+      // motor5.run(0);
       AfterBState = false;
       ShootState = 0;
       Serial.println("EndBDown");
     }
     if (label == 'Y') {
-      motor5.run(0);
+      // motor5.run(0);
       YState = false;
       AfterBState = true;
       AfterBStartTime = millis();

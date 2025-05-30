@@ -22,7 +22,14 @@
 #define PWM2 4
 
 //---------------------------------------- DriveBase Address && Define
-float LIMIT_SPEED = 0.45;
+float LIMIT_SPEED = 0.55;
+
+float smoothedSpeed1 = 0;
+float smoothedSpeed2 = 0;
+float smoothedSpeed3 = 0;
+float smoothedSpeed4 = 0;
+unsigned long lastUpdateTime = 0;
+const float smoothFactor = 0.2;
 
 #define Left_I2C_ADDRESS 0x50
 #define Right_I2C_ADDRESS 0x57
@@ -89,8 +96,8 @@ ControllerPtr myControllers[1];
 
 // The address of the gamepad that is allowed to connect.
 // You can add up to four entries.
-//static const char * controller_addr_string = "40:8E:2C:16:4E:66";
-static const char * controller_addr_string = "90:B6:85:9A:50:B0";
+//static const char * controller_addr_string = "40:8E:2C:16:4E:66"; //XBOX
+static const char * controller_addr_string = "90:B6:85:9A:50:B0"; //PS5
 
 #endif
 
@@ -218,8 +225,10 @@ void loop()
 
 //------------------------------------------------- DriveBase Control
   float direction = atan2(x_ctrl, -y_ctrl);
-  float turn = mapf(x_turn, -1, 1, -180, 180);
+  float turn = mapf(x_turn, -1, 1, -140, 140);
   float speed = sqrt((pow(x_ctrl, 2) + pow(y_ctrl, 2))) * 255;
+  
+
   movebase(speed, direction, turn);
 //------------------------------------------------- DriveBase Control
   ActionCommand();
