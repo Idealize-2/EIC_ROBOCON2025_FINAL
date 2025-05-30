@@ -63,6 +63,23 @@ void processController() {
     motor5.run(0);
   }
 
+  if (C_now.ll && !C_past.ll) {
+    if (ShootState == 0) {
+      ShootState = 1;
+    } else {
+      ShootState = 0;
+    }
+  }
+
+  if (C_now.lr && !C_past.lr) {
+    if (ShootState == 0) {
+      ShootState = 5;
+    } else {
+      ShootState = 0;
+    }
+  }
+
+
 
   // Serial.print(C_now.x);
   // Serial.print(" ");
@@ -137,6 +154,16 @@ void ActionCommand() {
     digitalWrite(INA2, HIGH);
     digitalWrite(INB2, LOW);
     analogWrite(PWM2, 220);
+  }
+
+  if (ShootState == 5) {
+    digitalWrite(INA1, LOW);
+    digitalWrite(INB1, HIGH);
+    analogWrite(PWM1, 250);
+
+    digitalWrite(INA2, HIGH);
+    digitalWrite(INB2, LOW);
+    analogWrite(PWM2, 250);
   }
 }
 
