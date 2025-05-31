@@ -96,7 +96,7 @@ ControllerPtr myControllers[1];
 
 // The address of the gamepad that is allowed to connect.
 // You can add up to four entries.
-//static const char * controller_addr_string = "40:8E:2C:16:4E:66"; //XBOX
+// static const char * controller_addr_string = "40:8E:2C:16:4E:66"; //XBOX
 static const char * controller_addr_string = "90:B6:85:9A:50:B0"; //PS5
 
 #endif
