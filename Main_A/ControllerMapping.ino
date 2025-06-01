@@ -137,7 +137,7 @@ void ActionCommand() {
     //Serial.println("Stop");
   }
   if (YState == true) {
-    ActionTime(YStartTime, 800, 'Y');
+    ActionTime(YStartTime, 900, 'Y');
   }
   if (ShootState == 3) {
     digitalWrite(INA2, HIGH);

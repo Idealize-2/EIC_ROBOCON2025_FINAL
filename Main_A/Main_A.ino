@@ -92,6 +92,7 @@ bool R2State = false;
 #ifdef Bluetooth 
   #include <Bluepad32.h>
 #include <uni.h>
+#include "esp_bt.h"
 ControllerPtr myControllers[1];
 
 // The address of the gamepad that is allowed to connect.

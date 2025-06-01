@@ -4,10 +4,17 @@
 
 #ifdef Bluetooth
 
-void initProtocal()
-{
+void initProtocal() {
 
   bd_addr_t controller_addr;
+
+  Serial.printf("Firmware: %s\n", BP32.firmwareVersion());
+  const uint8_t* addr = BP32.localBdAddress();
+  Serial.printf("BD Addr: %2X:%2X:%2X:%2X:%2X:%2X\n", addr[0], addr[1], addr[2], addr[3], addr[4], addr[5]);
+
+  // Setup the Bluepad32 callbacks
+  BP32.setup(&onConnectedController, &onDisconnectedController);
+  BP32.forgetBluetoothKeys();
 
   // Parse human-readable Bluetooth address.
   sscanf_bd_addr(controller_addr_string, controller_addr);
@@ -22,13 +29,9 @@ void initProtocal()
   // Similar to the "add_addr", its value gets stored in the NVS.
   uni_bt_allowlist_set_enabled(true);
 
-  Serial.printf("Firmware: %s\n", BP32.firmwareVersion());
-  const uint8_t* addr = BP32.localBdAddress();
-  Serial.printf("BD Addr: %2X:%2X:%2X:%2X:%2X:%2X\n", addr[0], addr[1], addr[2], addr[3], addr[4], addr[5]);
-
-  // Setup the Bluepad32 callbacks
-  BP32.setup(&onConnectedController, &onDisconnectedController);
-  BP32.forgetBluetoothKeys();
+  esp_ble_tx_power_set(ESP_BLE_PWR_TYPE_DEFAULT, ESP_PWR_LVL_P9);
+  esp_ble_tx_power_set(ESP_BLE_PWR_TYPE_ADV, ESP_PWR_LVL_P9);
+  esp_ble_tx_power_set(ESP_BLE_PWR_TYPE_SCAN, ESP_PWR_LVL_P9);
 }
 
 
@@ -48,6 +51,8 @@ void onConnectedController(ControllerPtr ctl) {
                     properties.product_id);
       myControllers[i] = ctl;
       foundEmptySlot = true;
+      BP32.enableNewBluetoothConnections(false);
+      Serial.println(uni_bt_allowlist_is_enabled());
       break;
     }
   }
@@ -64,6 +69,7 @@ void onDisconnectedController(ControllerPtr ctl) {
       Serial.printf("CALLBACK: Controller disconnected from index=%d\n", i);
       myControllers[i] = nullptr;
       foundController = true;
+      BP32.enableNewBluetoothConnections(true);
       break;
     }
   }
@@ -73,7 +79,7 @@ void onDisconnectedController(ControllerPtr ctl) {
   }
 }
 
-bool updateData( Controller_Status& C_state ) {
+bool updateData(Controller_Status& C_state) {
   bool newData = BP32.update();
   for (auto myController : myControllers) {
 
@@ -108,11 +114,11 @@ bool updateData( Controller_Status& C_state ) {
       C_state.rd = myController->a();
 
       // // LEFT BUTTON
-      C_state.lt =  myController->dpad() == 1;
-      C_state.ll =  myController->dpad() == 8;
-      C_state.lr =  myController->dpad() == 4;
-      C_state.ld =  myController->dpad() == 2;
-      
+      C_state.lt = myController->dpad() == 1;
+      C_state.ll = myController->dpad() == 8;
+      C_state.lr = myController->dpad() == 4;
+      C_state.ld = myController->dpad() == 2;
+
       // R3 L3
       C_state.l3 = myController->thumbL();
       C_state.r3 = myController->thumbR();
@@ -130,9 +136,6 @@ bool updateData( Controller_Status& C_state ) {
       C_state.home = myController->miscHome();
       C_state.select = myController->miscSelect();
       // bool select , home ;
-
-      
-
     }
   }
   return newData;
@@ -140,4 +143,3 @@ bool updateData( Controller_Status& C_state ) {
 
 
 #endif
-
