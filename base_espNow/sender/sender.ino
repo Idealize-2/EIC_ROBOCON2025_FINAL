@@ -8,20 +8,14 @@
 #include <WiFi.h>
 
 // REPLACE WITH YOUR RECEIVER MAC Address
-////ec:e3:34:da:ad:ec
-uint8_t broadcastAddress[] = {0xec, 0xe3, 0x34, 0xda, 0xad, 0xec};
+//EC:E3:34:DA:C2:FC
+uint8_t broadcastAddress[] = {0xEC, 0xE3, 0x34, 0xDA, 0xC2, 0xFC};
 
 // Structure example to send data
 // Must match the receiver structure
-typedef struct struct_message {
-  char a[32];
-  int b;
-  float c;
-  bool d;
-} struct_message;
 
-// Create a struct_message called myData
-struct_message myData;
+char msg = 'R';
+
 
 esp_now_peer_info_t peerInfo;
 
@@ -34,7 +28,7 @@ void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
 void setup() {
   // Init Serial Monitor
   Serial.begin(115200);
- 
+  pinMode(32,INPUT_PULLUP);
   // Set device as a Wi-Fi Station
   WiFi.mode(WIFI_STA);
 
@@ -59,22 +53,36 @@ void setup() {
     return;
   }
 }
+
+bool state;
  
 void loop() {
-  // Set values to send
-  strcpy(myData.a, "THIS IS A CHAR");
-  myData.b = random(1,20);
-  myData.c = 1.2;
-  myData.d = false;
   
   // Send message via ESP-NOW
-  esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
-   
-  if (result == ESP_OK) {
-    Serial.println("Sent with success");
+  if( digitalRead(32) == 1 && !state){
+    for(int i = 0 ; i < 10 ; i++)
+    {
+      esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &msg, sizeof(msg));
+    
+      if (result == ESP_OK) {
+        Serial.println("Sent with success");
+      }
+      else {
+        Serial.println("Error sending the data");
+      }
+      delay(100);
+    }
+    
   }
-  else {
-    Serial.println("Error sending the data");
-  }
-  delay(100);
+  state = digitalRead(32) == 1;
+
+    // esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &msh, sizeof(msg));
+    
+    // if (result == ESP_OK) {
+    //   Serial.println("Sent with success");
+    // }
+    // else {
+    //   Serial.println("Error sending the data");
+    // }
+    // delay(100);
 }
