@@ -80,10 +80,17 @@ bool L2State = false;
 bool R1State = false;
 bool R2State = false;
 
+bool Letgooooooo = false;
+bool LetgoState = false;
+
+long start_state;
+
 
 // UNCOMMENT JUST ONE USED PROTOCAL (uncomment in pair) 
 
 #define Bluetooth bool useBluetooth = true; // use esp32_bluepad in board manager
+
+#define with_EspNow
 
 //#define EspNow bool useEspNow = true; // also check Reciever MAC address to send
 
@@ -97,8 +104,14 @@ ControllerPtr myControllers[1];
 
 // The address of the gamepad that is allowed to connect.
 // You can add up to four entries.
-// static const char * controller_addr_string = "40:8E:2C:16:4E:66"; //XBOX
-static const char * controller_addr_string = "90:B6:85:9A:50:B0"; //PS5
+static const char * controller_addr_string = "5C:BA:37:F8:62:00"; //XBOX
+//static const char * controller_addr_string = "90:B6:85:9A:50:B0"; //PS5
+
+#endif
+
+#ifdef with_EspNow
+  #include <esp_now.h>
+  #include <WiFi.h>
 
 #endif
 
@@ -189,6 +202,8 @@ void setup() {
 
   //Start Communication Protocal
   initProtocal();
+
+  initEspNow();
   
 
 }
@@ -206,31 +221,39 @@ void setup() {
 
 void loop() 
 {
-//------------------------------------------------ Controller Input && update data
-  bool dataUpdated = updateData( C_now );
-  //Serial.println("OK"); 
-  //Serial.println( dataUpdated ); //for Debug
-  if (dataUpdated) 
-  {
-    //Serial.print("data updated");
-    processController();
 
-    //Update C_past for Rising Edge Falling Edge Case
-    C_past = C_now;
- }
-  
+    if( Letgooooooo )
+    {
+      if(millis() > start_state + 500 ) Letgooooooo = false;
+
+    }
+
+      //------------------------------------------------ Controller Input && update data
+    bool dataUpdated = updateData( C_now );
+    //Serial.println("OK"); 
+    //Serial.println( dataUpdated ); //for Debug
+    if (dataUpdated) 
+    {
+      //Serial.print("data updated");
+      processController();
+
+      //Update C_past for Rising Edge Falling Edge Case
+      C_past = C_now;
+    }
+    
 
 
-//------------------------------------------------ Controller Input
+  //------------------------------------------------ Controller Input
 
 
-//------------------------------------------------- DriveBase Control
-  float direction = atan2(x_ctrl, -y_ctrl);
-  float turn = mapf(x_turn, -1, 1, -140, 140);
-  float speed = sqrt((pow(x_ctrl, 2) + pow(y_ctrl, 2))) * 255;
-  
+  //------------------------------------------------- DriveBase Control
+    float direction = atan2(x_ctrl, -y_ctrl);
+    float turn = mapf(x_turn, -1, 1, -140, 140);
+    float speed = sqrt((pow(x_ctrl, 2) + pow(y_ctrl, 2))) * 255;
+    
 
-  movebase(speed, direction, turn);
-//------------------------------------------------- DriveBase Control
-  ActionCommand();
+    movebase(speed, direction, turn);
+  //------------------------------------------------- DriveBase Control
+    ActionCommand();
+
 }

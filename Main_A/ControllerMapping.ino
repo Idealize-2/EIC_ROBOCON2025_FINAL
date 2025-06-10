@@ -59,7 +59,7 @@ void processController() {
     motor5.run(-255);
   } else if (C_now.lt){
     motor5.run(255);
-  } else if (!BState && !AfterBState){
+  } else if (!BState && !AfterBState && !YState){
     motor5.run(0);
   }
 
